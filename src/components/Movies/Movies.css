@@ -1,0 +1,38 @@
+.movies {
+  margin: 0 auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.movies__button {
+  margin: 80px auto;
+  padding: 11px 60px 9px 60px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 320px;
+  background-color: #202020;
+  border: 2px;
+  border-style: double;
+  border-color: #424242;
+  border-radius: 6px;
+}
+
+@media screen and (max-width: 1279px) {
+  .movies {
+    max-width: 708px;
+  }
+  .movies__button {
+    margin: 45px auto 80px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .movies {
+    max-width: 292px;
+  }
+  .movies__button {
+    min-width: 240px;
+  }
+}
