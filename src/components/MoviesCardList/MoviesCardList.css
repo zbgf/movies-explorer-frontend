@@ -8,10 +8,27 @@
   gap: 58px 30px;
 }
 
+.movies__button {
+  margin: 70px auto 80px;
+  padding: 11px 60px 9px 60px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 320px;
+  background-color: #202020;
+  border: 2px;
+  border-style: double;
+  border-color: #424242;
+  border-radius: 6px;
+}
+
 @media screen and (max-width: 1279px) {
   .movies__list {
     grid-template-columns: repeat(2, 1fr);
     gap: 20px 30px;
+  }
+  .movies__button {
+    margin: 45px auto 80px;
   }
 }
 
@@ -20,5 +37,8 @@
     padding: 50px 0 0;
     grid-template-columns: 1fr;
     gap: 25px;
+  }
+  .movies__button {
+    min-width: 240px;
   }
 }

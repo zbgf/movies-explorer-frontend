@@ -1,9 +1,9 @@
 .filter {
-  margin: 39px auto 0 auto;
+  margin: 0 auto 0 auto;
   padding: 0;
   max-width: 1140px;
   width: 100%;
-  border-bottom: 1px solid #E8E8E8;
+  border-bottom: 1px solid #424242;
 }
 
 .filter__container {

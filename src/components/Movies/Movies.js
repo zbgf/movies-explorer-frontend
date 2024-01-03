@@ -1,97 +1,17 @@
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
-import Header from "../Header/Header";
-import SearchForm from "../SearchForm/SearchForm";
-import Footer from "../Footer/Footer";
-import FilterCheckbox from "../FilterCheckbox/FilterCheckbox";
-import pic from "../../images/pic.png"
+import SearchForm from '../SearchForm/SearchForm';
+import Preloader from '../Preloader/Preloader'
 
-
-function Movies() {
-  const movies = [
-        {
-            image: pic,
-            title: "33 слова о дизайне",
-            duration: "1ч 17м",
-            _id: 1,
-        },
-        {
-            image: pic,
-            title: "33 слова о дизайне",
-            duration: "1ч 17м",
-            _id: 2,
-        },
-        {
-            image: pic,
-            title: "33 слова о дизайне",
-            duration: "1ч 17м",
-            _id: 3,
-        },
-        {
-            image: pic,
-            title: "33 слова о дизайне",
-            duration: "1ч 17м",
-            _id: 4,
-        },
-        {
-            image: pic,
-            title: "33 слова о дизайне",
-            duration: "1ч 17м",
-            _id: 5,
-        },
-        {
-            image:pic,
-            title: "33 слова о дизайне",
-            duration: "1ч 17м",
-            _id: 6,
-        },
-        {
-            image: pic,
-            title: "33 слова о дизайне",
-            duration: "1ч 17м",
-            _id: 7,
-        },
-        {
-            image: pic,
-            title: "33 слова о дизайне",
-            duration: "1ч 17м",
-            _id: 8,
-        },
-        {
-            image: pic,
-            title: "33 слова о дизайне",
-            duration: "1ч 17м",
-            _id: 9,
-        },
-        {
-            image: pic,
-            title: "33 слова о дизайне",
-            duration: "1ч 17м",
-            _id: 10,
-        },
-        {
-            image: pic,
-            title: "33 слова о дизайне",
-            duration: "1ч 17м",
-            _id: 11,
-        },
-        {
-            image: pic,
-            title: "33 слова о дизайне",
-            duration: "1ч 17м",
-            _id: 12,
-        },
-  ]
-
+function Movies(props) {
   return (
     <section className="movies">
-      <Header/>
-      <SearchForm />
-      <FilterCheckbox />
-      <MoviesCardList movies={movies} />
-      <button className="movies__button">Ещё</button>
-      <Footer />
+      <SearchForm movies={props.movies} searchMovie={props.searchMovie} isShortMovie={props.isShortMovie} setIsShortMovie={props.setIsShortMovie}/>
+      <span className="search-form__span">{props.noResultsMessage}</span>
+      <Preloader isPreloaderVisible={props.isPreloaderVisible}/>
+      <MoviesCardList moviesCards={props.moviesCards} toggleMovieSaveStatus={props.toggleMovieSaveStatus} isMovieInSavedList={props.isMovieInSavedList}/>
     </section>
   )
-}
+};
 
 export default Movies;
+
