@@ -1,0 +1,124 @@
+.techs {
+  margin: 0;
+  padding: 100px 70px 0 70px;
+  background-color: #272727;
+}
+
+.techs__title {
+  margin: 0 0 91px 0;
+  padding: 0 0 23px 0;
+  color: #fff;
+  border-bottom: 1px solid #dadada;
+  font-size: 22px;
+  letter-spacing: -0.04em;
+  font-weight: 400;
+}
+
+.techs__main {
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.techs__subtitle {
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  text-align: center;
+  font-size: 50px;
+  line-height: 58px;
+  letter-spacing: -0.04em;
+  font-weight: 400;
+}
+
+.techs__description {
+  margin: 26px 0 100px 0;
+  padding: 0;
+  color: #fff;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  text-align: center;
+  max-width: 460px;
+}
+
+.techs__items-list {
+  margin: 0 0 100px 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.techs__item {
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  width: 90px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  background-color: #303030;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+
+@media screen and (max-width: 1279px) {
+  .techs {
+    padding: 94px 52px 0 52px;
+  }
+  .techs__title {
+    margin: 0 0 81px 0;
+  }
+  .techs__description {
+    margin: 20px 0 83px 0;
+    font-size: 12px;
+  }
+  .techs__items-list {
+    margin: 0 0 90px 0;
+  }
+  .techs__item {
+    width: 84px;
+    height: 57px;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: -0.04em;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .techs {
+    padding: 70px 18px 0 18px;
+    background-color: #202020;
+  }
+  .techs__title {
+    margin: 0 0 51px 0;
+    padding: 0 0 28px 0;
+    border-bottom: 1px solid #000;
+    font-size: 18px;
+  }
+  .techs__subtitle {
+    font-size: 30px;
+  }
+  .techs__description {
+    margin: 13px 0 50px 0;
+    font-size: 11px;
+    line-height: 16px;
+    max-width: 292px;
+  }
+  .techs__items-list {
+    margin: 0 0 100px 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+  }
+}
