@@ -1,16 +1,29 @@
 import { useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FilterCheckbox from "../FilterCheckbox/FilterCheckbox";
 
 function SearchForm(props) {
   const { pathname } = useLocation();
-  const [searchQuery, setSearchQuery] = useState(localStorage.getItem('searchQuery')||'');
+  const [searchQuery, setSearchQuery] = useState(localStorage.getItem('searchQuery') || '');
+  const [savedMoviesSearchQuery, setSavedMoviesSearchQuery] = useState('');
+
+  useEffect(() => {
+    if (pathname === '/movies' && localStorage.getItem('searchQuery')) {
+      setSearchQuery(localStorage.getItem('searchQuery'));
+    } else if (pathname === '/saved-movies') {
+      setSearchQuery(savedMoviesSearchQuery);
+    } else {
+      setSearchQuery('');
+    }
+  }, [pathname, savedMoviesSearchQuery]);
 
   const onSubmit = (e) => {
     e.preventDefault();
     props.searchMovie(searchQuery, props.movies);
     if (pathname === '/movies') {
       localStorage.setItem('searchQuery', searchQuery);
+    } else if (pathname === '/saved-movies') {
+      setSavedMoviesSearchQuery(searchQuery);
     } else {
       setSearchQuery('');
     }
@@ -18,7 +31,16 @@ function SearchForm(props) {
 
   const handleChangeValue = (e) => {
     setSearchQuery(e.target.value);
+    if (pathname === '/saved-movies') {
+      setSavedMoviesSearchQuery(e.target.value);
+    }
   };
+
+  useEffect(() => {
+    if (pathname !== '/saved-movies') {
+      setSavedMoviesSearchQuery('');
+    }
+  }, [pathname]);
 
   return(
     <>

@@ -20,7 +20,7 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 5px;
 }
 
 .register__form-item {
@@ -103,12 +103,25 @@
 }
 
 .register__error {
-  margin: 42px auto 0;
+  margin: 42px auto 15px;
   padding: 0;
   color: #ff004c;
   font-size: 11px;
   font-weight: 400;
   justify-content: center;
+}
+
+.register__span-error {
+  margin: 7px 0 0 0;
+  padding: 0;
+  color: #ff004c;
+  font-size: 11px;
+  font-weight: 400;
+  visibility: hidden;
+}
+
+.register__span-error.visible {
+  visibility: visible;
 }
 
 @media screen and (max-width: 1279px) {

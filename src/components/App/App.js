@@ -1,4 +1,4 @@
-import { useState, useEffect, React } from 'react';
+import { useState, useEffect, React} from 'react';
 import { Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import CurrentUserContext from '../../utils/CurrentUserContext';
 import Main from '../Main/Main';
@@ -27,6 +27,7 @@ function App() {
   const [saveSearchMovies, setSaveSearchMovies] = useState([]);
   const [noResultsMessage, setNoResultsMessage] = useState('');
   const [isPreloaderVisible, setPreloaderVisible] = useState(false);
+  const [hasFetchedSaveMovies, setHasFetchedSaveMovies] = useState(false);
 
   function handleRegister(name, email, password) {
     return mainApi
@@ -36,7 +37,7 @@ function App() {
           return mainApi
             .login(email, password)
             .then((res) => {
-              navigate("/");
+              navigate("/movies");
               localStorage.setItem("jwt", res.token);
               setLogged(true);
             })
@@ -55,7 +56,7 @@ function App() {
   function handleLogin(email, password) {
     return mainApi.login(email, password)
     .then((res) => {
-      navigate("/");
+      navigate("/movies");
       localStorage.setItem("jwt", res.token);
       setLogged(true);
     })
@@ -98,7 +99,8 @@ function App() {
     navigate("/");
     localStorage.clear();
     setLogged(false);
-    window.location.reload()
+    window.location.reload();
+    setHasFetchedSaveMovies(false);
   };
 
   function getSaveMovies() {
@@ -113,12 +115,33 @@ function App() {
   };
 
   useEffect(() => {
-    if (isLogged) {
-      getSaveMovies();
-    }
-  }, [isLogged, saveMovies]);
+    const fetchData = async () => {
+      try {
+        if (isLogged && !hasFetchedSaveMovies) {
+          const userData = await mainApi.getUserInfo(localStorage.jwt);
+          setCurrentUser(userData);
+          setLogged(true);
+          const moviesData = await moviesApi.getMovies();
+          setMovies(moviesData);
+          const savedMovies = await mainApi.getMovies();
+          const filteredMovies = savedMovies.filter(({ owner }) => owner === userData._id).map(({ _id, ...rest }) => ({ ...rest, id: _id }));
+          setSaveMovies(filteredMovies);
+          setHasFetchedSaveMovies(true);
+        }
+      } catch (err) {
+        console.error(`Ошибка.....: ${err}`);
+      }
+    };
+  
+    fetchData();
+  }, [isLogged, hasFetchedSaveMovies]);
 
   function searchMovie(text, movies) {
+    const storedMovies = JSON.parse(localStorage.getItem('movies')) || [];
+  
+    if (storedMovies.length === 0) {
+      localStorage.setItem('movies', JSON.stringify(movies));
+    }
     const moviesFilter = movies.filter(({ nameRU, duration }) => (nameRU.toLowerCase().includes(text.toLowerCase())&&(isShortMovie ? duration <= 40 : true)));
     setPreloaderVisible(true);
     setNoResultsMessage('');
@@ -127,18 +150,14 @@ function App() {
       getSaveMovies();
       setSearchMovies(filteredMovies.map(mapMovieToCard));
       localStorage.setItem('foundMovies', JSON.stringify(filteredMovies));
-  
       if (filteredMovies.length === 0) {
         setNoResultsMessage('Ничего не найдено');
       } else {
         setNoResultsMessage('');
       }
     };
-  
     if (location.pathname === '/movies') {
-      setTimeout(() => {
         handleResults(moviesFilter);
-      }, 1000);
     } else {
       setIsSearch(true);
       setSaveSearchMovies(moviesFilter);
@@ -155,7 +174,6 @@ function App() {
       try {
         if (isLogged) {
           const movies = await moviesApi.getMovies();
-          localStorage.setItem('movies', JSON.stringify(movies));
           setMovies(movies);
           getSaveMovies();
           if (localStorage.getItem('foundMovies')) {

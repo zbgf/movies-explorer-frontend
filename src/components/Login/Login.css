@@ -72,6 +72,24 @@
   cursor: pointer;
 }
 
+.login__submit-button_disabled {
+  background-color: #f8f8f8;
+  color: #c2c2c2;
+}
+
+.login__submit-button_disabled:hover {
+  opacity: 1;
+  cursor: default;
+}
+
+.login__error-input {
+  margin: 7px 0 0 0;
+  padding: 0;
+  color: #ff004c;
+  font-size: 11px;
+  font-weight: 400;
+}
+
 .login__signin {
   margin: 14px 0 0 0;
   padding: 0;

@@ -85,7 +85,7 @@
 
 @media screen and (max-width: 1279px) {
   .movies-card__button {
-    display: block;
+    /* display: block; */
   }
   .movies-card__image {
     max-width: 339px;
