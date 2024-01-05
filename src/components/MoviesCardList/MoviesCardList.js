@@ -1,8 +1,10 @@
 import MoviesCard from '../MoviesCard/MoviesCard';
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 function MoviesCardList(props) {
   const [visibleMoviesCount, setVisibleMoviesCount] = useState(0);
+  const location = useLocation();
 
   const increaseVisibleMoviesCount = () => {
     if (window.innerWidth >= 1280) { setVisibleMoviesCount(visibleMoviesCount + 3) } 
@@ -15,6 +17,19 @@ function MoviesCardList(props) {
     if (window.innerWidth < 767) { setVisibleMoviesCount(5) } 
   }, [])
 
+  useEffect(() => {
+    // console.log(props.searchKey)
+    if (window.innerWidth >= 1280) { setVisibleMoviesCount(12) } 
+    if (window.innerWidth < 1279 && window.innerWidth >= 768) { setVisibleMoviesCount(8) }
+    if (window.innerWidth < 767) { setVisibleMoviesCount(5) } 
+  }, [props.searchKey]);
+
+  useEffect(() => {
+    if (location.pathname === '/saved-movies') {
+      setVisibleMoviesCount(props.moviesCards.length);
+    }
+  }, [location.pathname, props.moviesCards]);
+
   return(
     <>
       <ul className='movies__list'>
@@ -23,11 +38,11 @@ function MoviesCardList(props) {
         ))}
       </ul>
       {
-        (props.moviesCards.length > visibleMoviesCount) 
-        ? 
-        ( <button className='movies__button' type='button' onClick={increaseVisibleMoviesCount}>Ещё</button> ) 
-        : 
-        <></>
+      !location.pathname.includes('/saved-movies') && props.moviesCards.length > visibleMoviesCount 
+      ? 
+      ( <button className='movies__button' type='button' onClick={increaseVisibleMoviesCount}>Ещё</button>) 
+      : 
+      ( <></> )
       }
     </>
   )

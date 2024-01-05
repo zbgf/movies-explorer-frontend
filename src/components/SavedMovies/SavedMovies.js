@@ -16,7 +16,7 @@ function SavedMovies(props) {
         ?
         <MoviesCardList movies={props.movies} moviesCards={props.movies} removeMovieFromSavedList={props.removeMovieFromSavedList}/>
         : 
-        <MoviesCardList moviesCards={props.moviesCards} removeMovieFromSavedList={props.removeMovieFromSavedList}/>
+        <MoviesCardList moviesCards={props.savedSearchedMovies} removeMovieFromSavedList={props.removeMovieFromSavedList}/>
       }
     </section>
   )

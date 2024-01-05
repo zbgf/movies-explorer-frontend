@@ -28,6 +28,8 @@ function App() {
   const [noResultsMessage, setNoResultsMessage] = useState('');
   const [isPreloaderVisible, setPreloaderVisible] = useState(false);
   const [hasFetchedSaveMovies, setHasFetchedSaveMovies] = useState(false);
+  const [searchKey, setSearchKey] = useState('');
+  const [savedSearchedMovies, setSavedSearchedMovies] = useState([]);
 
   function handleRegister(name, email, password) {
     return mainApi
@@ -137,37 +139,54 @@ function App() {
   }, [isLogged, hasFetchedSaveMovies]);
 
   function searchMovie(text, movies) {
-    const storedMovies = JSON.parse(localStorage.getItem('movies')) || [];
+    setSearchKey(text.toLowerCase());
+    const localStorageKey = location.pathname === '/movies' ? 'movies' : null;
+    const storedMoviesCheck = localStorageKey ? JSON.parse(localStorage.getItem(localStorageKey)) || [] : [];
   
-    if (storedMovies.length === 0) {
-      localStorage.setItem('movies', JSON.stringify(movies));
+    if (localStorageKey && storedMoviesCheck.length === 0) {
+      localStorage.setItem(localStorageKey, JSON.stringify(movies));
     }
-    const moviesFilter = movies.filter(({ nameRU, duration }) => (nameRU.toLowerCase().includes(text.toLowerCase())&&(isShortMovie ? duration <= 40 : true)));
+    const storedMovies = localStorageKey ? JSON.parse(localStorage.getItem(localStorageKey)) || [] : [];
+    const moviesToFilter = localStorageKey ? storedMovies : movies;
+  
+    const moviesFilter = moviesToFilter.filter(({ nameRU, duration }) => (
+      nameRU.toLowerCase().includes(text.toLowerCase()) && (isShortMovie ? duration <= 40 : true)
+    ));
+  
     setPreloaderVisible(true);
     setNoResultsMessage('');
+  
     const handleResults = (filteredMovies) => {
-      setPreloaderVisible(false);
       getSaveMovies();
       setSearchMovies(filteredMovies.map(mapMovieToCard));
       localStorage.setItem('foundMovies', JSON.stringify(filteredMovies));
+  
       if (filteredMovies.length === 0) {
         setNoResultsMessage('Ничего не найдено');
+        setTimeout(() => {setPreloaderVisible(false);}, 0);
       } else {
         setNoResultsMessage('');
+        setTimeout(() => {setPreloaderVisible(false);}, 0);
       }
+      setTimeout(() => {setPreloaderVisible(false);}, 0);
+
     };
+  
     if (location.pathname === '/movies') {
-        handleResults(moviesFilter);
+      handleResults(moviesFilter);
     } else {
       setIsSearch(true);
       setSaveSearchMovies(moviesFilter);
       if (moviesFilter.length === 0) {
-        setNoResultsMessage('Ничего не найдено')
+        setTimeout(() => {setPreloaderVisible(false);}, 0);
+        setNoResultsMessage('Ничего не найдено');
       } else {
+        setTimeout(() => {setPreloaderVisible(false);}, 0);
         setNoResultsMessage('');
       }
+      setSavedSearchedMovies(moviesFilter);
     }
-  };
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -204,6 +223,8 @@ function App() {
       .then(() => {
         const resultForMovies = saveMovies.filter ( item => item.id !== movie.id);
         setSaveMovies(resultForMovies);
+        const filteredSavedMovies = savedSearchedMovies.filter ( item => item.id !== movie.id);
+        setSavedSearchedMovies(filteredSavedMovies);
       })
       .catch(err => console.log(`Ошибка.....: ${err}`))
   };
@@ -238,14 +259,14 @@ function App() {
           <Route path='/movies' element={
             <ProtectedRoute isLogged={isLogged}>
               <Header isLogged={isLogged}/>
-              <Movies isPreloaderVisible={isPreloaderVisible} noResultsMessage={noResultsMessage} moviesCards={searchMovies} isShortMovie={isShortMovie} searchMovie={searchMovie} isMovieInSavedList={isMovieInSavedList} toggleMovieSaveStatus={toggleMovieSaveStatus} movies={movies} setIsShortMovie={setIsShortMovie}/>
+              <Movies isPreloaderVisible={isPreloaderVisible} noResultsMessage={noResultsMessage} moviesCards={searchMovies} isShortMovie={isShortMovie} searchMovie={searchMovie} isMovieInSavedList={isMovieInSavedList} toggleMovieSaveStatus={toggleMovieSaveStatus} movies={movies} setIsShortMovie={setIsShortMovie} searchKey={searchKey}/>
               <Footer/>
             </ProtectedRoute>
           }/>
           <Route path='/saved-movies' element={
             <ProtectedRoute isLogged={isLogged}>
               <Header isLogged={isLogged}/>
-              <SavedMovies setNoResultsMessage={setNoResultsMessage } noResultsMessage={noResultsMessage} moviesCards={saveSearchMovies} isShortMovie={isShortMovie} searchMovie={searchMovie} removeMovieFromSavedList={removeMovieFromSavedList} movies={saveMovies} setIsShortMovie={setIsShortMovie} isSearch={isSearch} getSaveMovies={getSaveMovies} onSearched={setIsSearch}/>
+              <SavedMovies savedSearchedMovies={savedSearchedMovies} setNoResultsMessage={setNoResultsMessage } noResultsMessage={noResultsMessage} moviesCards={saveSearchMovies} isShortMovie={isShortMovie} searchMovie={searchMovie} removeMovieFromSavedList={removeMovieFromSavedList} movies={saveMovies} setIsShortMovie={setIsShortMovie} isSearch={isSearch} getSaveMovies={getSaveMovies} onSearched={setIsSearch}/>
               <Footer/> 
             </ProtectedRoute>
           }/>
