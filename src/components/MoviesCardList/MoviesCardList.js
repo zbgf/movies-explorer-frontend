@@ -1,12 +1,51 @@
 import MoviesCard from '../MoviesCard/MoviesCard';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
-function MoviesCardList({ movies }) {
+function MoviesCardList(props) {
+  const [visibleMoviesCount, setVisibleMoviesCount] = useState(0);
+  const location = useLocation();
 
-  return (
-    <ul className="movies__list">
-      {movies.map((movie) => ( <MoviesCard key={movie._id} movie={movie} /> ))}
-    </ul>
+  const increaseVisibleMoviesCount = () => {
+    if (window.innerWidth >= 1280) { setVisibleMoviesCount(visibleMoviesCount + 3) } 
+    if (window.innerWidth < 1280) { setVisibleMoviesCount(visibleMoviesCount + 2) }
+  }
+
+  useEffect (() => {     
+    if (window.innerWidth >= 1280) { setVisibleMoviesCount(12) } 
+    if (window.innerWidth < 1279 && window.innerWidth >= 768) { setVisibleMoviesCount(8) }
+    if (window.innerWidth < 767) { setVisibleMoviesCount(5) } 
+  }, [])
+
+  useEffect(() => {
+    // console.log(props.searchKey)
+    if (window.innerWidth >= 1280) { setVisibleMoviesCount(12) } 
+    if (window.innerWidth < 1279 && window.innerWidth >= 768) { setVisibleMoviesCount(8) }
+    if (window.innerWidth < 767) { setVisibleMoviesCount(5) } 
+  }, [props.searchKey]);
+
+  useEffect(() => {
+    if (location.pathname === '/saved-movies') {
+      setVisibleMoviesCount(props.moviesCards.length);
+    }
+  }, [location.pathname, props.moviesCards]);
+
+  return(
+    <>
+      <ul className='movies__list'>
+        {props.moviesCards.slice(0, visibleMoviesCount).map((movie) => (
+          <MoviesCard duration={movie.duration} image={movie.image} trailerLink={movie.trailerLink} nameRU={movie.nameRU} movie={movie} key={movie.movieId} removeMovieFromSavedList={props.removeMovieFromSavedList} isMovieInSavedList={props.isMovieInSavedList} toggleMovieSaveStatus={props.toggleMovieSaveStatus}/>
+        ))}
+      </ul>
+      {
+      !location.pathname.includes('/saved-movies') && props.moviesCards.length > visibleMoviesCount 
+      ? 
+      ( <button className='movies__button' type='button' onClick={increaseVisibleMoviesCount}>Ещё</button>) 
+      : 
+      ( <></> )
+      }
+    </>
   )
-}
+};
 
 export default MoviesCardList;

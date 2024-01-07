@@ -1,37 +1,25 @@
+import { useEffect } from 'react';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
-import Header from "../Header/Header";
-import SearchForm from "../SearchForm/SearchForm";
-import Footer from "../Footer/Footer";
-import FilterCheckbox from "../FilterCheckbox/FilterCheckbox";
-import pic from "../../images/pic.png"
+import SearchForm from '../SearchForm/SearchForm';
 
-
-function SavedMovies() {
-  const movies = [
-    {
-      image: pic,
-      title: "34 слова о дизайне",
-      duration: "1ч 17м",
-      _id: 1,
-    },
-    {
-      image: pic,
-      title: "33 слова о дизайне",
-      duration: "1ч 17м",
-      _id: 2,
-    },
-  ]
-
+function SavedMovies(props) {
+  useEffect(() => {
+    props.onSearched(false);
+    props.setNoResultsMessage('');
+  }, []);
+  
   return (
     <section className="movies">
-      <Header/>
-      <SearchForm />
-      <FilterCheckbox />
-      <MoviesCardList movies={movies} />
-      <button className="movies__button">Ещё</button>
-      <Footer />
+      <SearchForm movies={props.movies} searchMovie={props.searchMovie} isShortMovie={props.isShortMovie} setIsShortMovie={props.setIsShortMovie}/>
+      <span className="search-form__span">{props.noResultsMessage}</span>
+      {!props.isSearch 
+        ?
+        <MoviesCardList movies={props.movies} moviesCards={props.movies} removeMovieFromSavedList={props.removeMovieFromSavedList}/>
+        : 
+        <MoviesCardList moviesCards={props.savedSearchedMovies} removeMovieFromSavedList={props.removeMovieFromSavedList}/>
+      }
     </section>
   )
-}
+};
 
 export default SavedMovies;

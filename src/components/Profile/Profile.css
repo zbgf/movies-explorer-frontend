@@ -6,6 +6,17 @@
   max-width: 410px;
 }
 
+.profile__success-message {
+  color: #2be080;
+  margin: 10px auto 0 auto;
+  visibility: hidden;
+  align-items: center;
+}
+
+.profile__success-message.visible {
+  visibility: visible;
+}
+
 .profile__title {
   margin: 0;
   padding: 0;
@@ -16,7 +27,7 @@
 }
 
 .profile__form {
-  margin: 125px 0 0 0;
+  margin: 95px 0 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -59,7 +70,7 @@
 }
 
 .profile__wrapper {
-  margin: 220px 0 0 0;
+  margin: 15px 0 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -67,13 +78,41 @@
 }
 
 .profile__submit {
-  margin: 0;
+  margin: 20px 0 0 0;
   padding: 0;
   color: #fff;
   font-size: 13px;
   font-weight: 400;
   background-color: #202020;
   border: none;
+}
+
+.profile__submit:hover {
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.profile__submit_save {
+  margin: 10px 0 0 0;
+  padding: 0;
+  width: 100%;
+  height: 45px;
+  color: #fff;
+  background-color: #4285f4;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  border-radius: 3px;
+}
+
+.profile__error {
+  margin: 160px auto 0 auto;
+  padding: 0;
+  color: #ff004c;
+  font-size: 11px;
+  font-weight: 400;
+  justify-content: center;
 }
 
 .profile__exit {
@@ -86,16 +125,34 @@
   border: none;
 }
 
+.profile__exit:hover {
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.disabled {
+  /* color: #545454; Цвет текста для отключенной кнопки */
+  cursor: not-allowed; /* Запрет изменения курсора при наведении на отключенную кнопку */
+}
+
+.active:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
+
 @media screen and (max-width: 1279px) {
   .profile {
   padding: 230px 0 0 0;
   }
   .profile__form {
-    margin: 100px 0 210px 0;
+    margin: 100px 0 20px 0;
   }
 
   .profile__wrapper {
     margin: auto 0 269px 0;
+  }
+  .profile__submit {
+    margin: 200px 0 0 0;
   }
 }
 
@@ -105,12 +162,15 @@
   }
 
   .profile__form {
-    margin: 80px auto 210px auto;
+    margin: 80px auto 10px auto;
     width: 260px;
   }
 
   .profile__wrapper {
     margin: auto 0 70px 0;
-    padding: 170px 0 0 0;
+    padding: 10px 0 0 0;
+  }
+  .profile__submit {
+    margin: 360px 0 0 0;
   }
 }
