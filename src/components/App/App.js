@@ -29,6 +29,7 @@ function App() {
   const [isPreloaderVisible, setPreloaderVisible] = useState(false);
   const [hasFetchedSaveMovies, setHasFetchedSaveMovies] = useState(false);
   const [searchKey, setSearchKey] = useState('');
+
   const [savedSearchedMovies, setSavedSearchedMovies] = useState([]);
 
   function handleRegister(name, email, password) {
@@ -123,8 +124,6 @@ function App() {
           const userData = await mainApi.getUserInfo(localStorage.jwt);
           setCurrentUser(userData);
           setLogged(true);
-          const moviesData = await moviesApi.getMovies();
-          setMovies(moviesData);
           const savedMovies = await mainApi.getMovies();
           const filteredMovies = savedMovies.filter(({ owner }) => owner === userData._id).map(({ _id, ...rest }) => ({ ...rest, id: _id }));
           setSaveMovies(filteredMovies);
@@ -138,53 +137,58 @@ function App() {
     fetchData();
   }, [isLogged, hasFetchedSaveMovies]);
 
-  function searchMovie(text, movies) {
-    setSearchKey(text.toLowerCase());
-    const localStorageKey = location.pathname === '/movies' ? 'movies' : null;
-    const storedMoviesCheck = localStorageKey ? JSON.parse(localStorage.getItem(localStorageKey)) || [] : [];
-  
-    if (localStorageKey && storedMoviesCheck.length === 0) {
-      localStorage.setItem(localStorageKey, JSON.stringify(movies));
-    }
-    const storedMovies = localStorageKey ? JSON.parse(localStorage.getItem(localStorageKey)) || [] : [];
-    const moviesToFilter = localStorageKey ? storedMovies : movies;
-  
-    const moviesFilter = moviesToFilter.filter(({ nameRU, duration }) => (
-      nameRU.toLowerCase().includes(text.toLowerCase()) && (isShortMovie ? duration <= 40 : true)
-    ));
-  
-    setPreloaderVisible(true);
-    setNoResultsMessage('');
-  
-    const handleResults = (filteredMovies) => {
-      getSaveMovies();
-      setSearchMovies(filteredMovies.map(mapMovieToCard));
-      localStorage.setItem('foundMovies', JSON.stringify(filteredMovies));
-  
-      if (filteredMovies.length === 0) {
-        setNoResultsMessage('Ничего не найдено');
-        setTimeout(() => {setPreloaderVisible(false);}, 0);
-      } else {
-        setNoResultsMessage('');
-        setTimeout(() => {setPreloaderVisible(false);}, 0);
+  async function searchMovie(text, movies) {
+    try {
+      setPreloaderVisible(true);
+      setSearchKey(text.toLowerCase());
+      const localStorageKey = location.pathname === '/movies' ? 'movies' : null;
+      const storedMoviesCheck = localStorageKey ? JSON.parse(localStorage.getItem(localStorageKey)) || [] : [];
+    
+      if (localStorageKey && storedMoviesCheck.length === 0) {
+        try {
+          setPreloaderVisible(true);
+          const movies = await moviesApi.getMovies();
+          localStorage.setItem(localStorageKey, JSON.stringify(movies));
+        } catch (error) {
+          console.error('Ошибка при загрузке фильмов из API:', error);
+        } finally {
+          setPreloaderVisible(false);
+        }
       }
-      setTimeout(() => {setPreloaderVisible(false);}, 0);
-
-    };
-  
-    if (location.pathname === '/movies') {
-      handleResults(moviesFilter);
-    } else {
-      setIsSearch(true);
-      setSaveSearchMovies(moviesFilter);
-      if (moviesFilter.length === 0) {
-        setTimeout(() => {setPreloaderVisible(false);}, 0);
-        setNoResultsMessage('Ничего не найдено');
+      const storedMovies = localStorageKey ? JSON.parse(localStorage.getItem(localStorageKey)) || [] : [];
+      const moviesToFilter = localStorageKey ? storedMovies : movies;
+      const moviesFilter = moviesToFilter.filter(({ nameRU, duration }) => (
+        nameRU.toLowerCase().includes(text.toLowerCase()) && (isShortMovie ? duration <= 40 : true)
+      ));
+    
+      setPreloaderVisible(true);
+      setNoResultsMessage('');
+    
+      const handleResults = (filteredMovies) => {
+        getSaveMovies();
+        setSearchMovies(filteredMovies.map(mapMovieToCard));
+        localStorage.setItem('foundMovies', JSON.stringify(filteredMovies));
+        if (filteredMovies.length === 0) {
+          setNoResultsMessage('Ничего не найдено');
+        } else {
+          setNoResultsMessage('');
+        }
+      };
+    
+      if (location.pathname === '/movies') {
+        handleResults(moviesFilter);
       } else {
-        setTimeout(() => {setPreloaderVisible(false);}, 0);
-        setNoResultsMessage('');
+        setIsSearch(true);
+        setSaveSearchMovies(moviesFilter);
+        if (moviesFilter.length === 0) {
+          setNoResultsMessage('Ничего не найдено');
+        } else {
+          setNoResultsMessage('');
+        }
+        setSavedSearchedMovies(moviesFilter);
       }
-      setSavedSearchedMovies(moviesFilter);
+    } finally {
+      setPreloaderVisible(false);
     }
   }
 
@@ -192,8 +196,6 @@ function App() {
     const fetchData = async () => {
       try {
         if (isLogged) {
-          const movies = await moviesApi.getMovies();
-          setMovies(movies);
           getSaveMovies();
           if (localStorage.getItem('foundMovies')) {
             const loadedMovies = JSON.parse(localStorage.getItem('foundMovies'));
